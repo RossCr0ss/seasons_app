@@ -1,5 +1,8 @@
 import React from "react";
 import { createRoot } from "react-dom/client";
+import SeasonDisplay from "./SeasonDisplay";
+import Spinner from "./Spinner";
+import "semantic-ui-css/semantic.min.css";
 
 class App extends React.Component {
   state = { lat: null, errorMessage: "" };
@@ -10,14 +13,20 @@ class App extends React.Component {
       (err) => this.setState({ errorMessage: err.message })
     );
   }
+
+  renderWrapper = () => {
+    if (this.state.errorMessage && !this.state.lat) {
+      return <p>Error: {this.state.errorMessage}</p>;
+    }
+    if (!this.state.errorMessage && this.state.lat) {
+      return <SeasonDisplay lat={this.state.lat} />;
+    }
+    if (!this.state.errorMessage && !this.state.lat) {
+      return <Spinner message="Please accept location request" />;
+    }
+  };
   render() {
-    return (
-      <div>
-        {this.state.errorMessage && !this.state.lat && <p>Error: {this.state.errorMessage}</p>}
-        {!this.state.errorMessage && this.state.lat && <p>Latitude: {this.state.lat}</p>}
-        {!this.state.errorMessage && !this.state.lat && <p>Loading...</p>}
-      </div>
-    );
+    return <div className="border red">{this.renderWrapper()}</div>;
   }
 }
 
